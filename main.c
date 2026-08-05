@@ -44,6 +44,6 @@ int main()
         render(food, snake_length, snake, game_map);
     }
     endwin();
-    printf("Game Over! Вы пососали!\n");
+    printf("Game Over!\n", );
     return 0;
 }
