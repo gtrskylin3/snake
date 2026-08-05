@@ -1,25 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <stdbool.h>
-#include <unistd.h>
-#include <ncurses.h>
-#define height 20
-#define width 50
-#define MAX_SNAKE 100
+#include "render.h"
+#include "snake.h"
 
-typedef struct
-{
-    int x;
-    int y;
-} Point;
-
-typedef enum {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT
-} Directions;
 
 void draw_game_location(char game_map[height][width])
 {
@@ -153,7 +134,7 @@ void render(Point food, int snake_length, Point snake[], char game_map[height][w
     draw_game_location(game_map);
     draw_score(snake_length);
     refresh();
-    usleep(80000);
+    usleep(100000);
 }
 
 void spawn_food(Point *food, int snake_length, Point snake[]){
@@ -174,48 +155,4 @@ void spawn_food(Point *food, int snake_length, Point snake[]){
 
 bool check_food(int snake_length, Point snake[], Point food){
     return (snake[0].x == food.x && snake[0].y == food.y);
-}
-
-int main()
-{
-    initscr();
-    cbreak();
-    noecho();
-    nodelay(stdscr, TRUE);
-    keypad(stdscr, TRUE);
-    curs_set(0);
-    if (has_colors()){
-        start_color();
-        use_default_colors();
-        init_pair(1, COLOR_WHITE, -1);
-        init_pair(2, COLOR_GREEN, -1);
-        init_pair(3, COLOR_RED, -1);
-        init_pair(4, COLOR_YELLOW, -1);
-    }
-    srand(time(NULL));
-    int snake_length = 3;
-    char game_map[height][width];
-    Point snake[MAX_SNAKE];
-    Point food;
-    Directions dir = RIGHT;
-    init_snake(snake_length, snake);
-    system("clear");
-    spawn_food(&food, snake_length, snake);
-    while (true)
-    {
-        create_game_location(game_map);
-        handle_input(&dir);
-        move_snake(snake_length, snake, dir);
-        if (collision_check(snake_length, snake)){
-            break;
-        }
-        if (check_food(snake_length, snake, food)){
-            if (snake_length < MAX_SNAKE) snake_length++;
-            spawn_food(&food, snake_length, snake);
-        }
-        render(food, snake_length, snake, game_map);
-    }
-    endwin();
-    printf("Game Over! Вы пососали!\n");
-    return 0;
 }
